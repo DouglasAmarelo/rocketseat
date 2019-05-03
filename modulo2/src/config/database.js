@@ -1,13 +1,14 @@
 module.exports = {
 	dialect: 'postgres',
-	host: '127.0.0.1',
+	host: '192.168.99.100',
+	user: 'docker',
 	username: 'docker',
 	password: 'docker',
 	database: 'gonodemodulo2',
 	operatorAliases: false,
 	define: {
 		timestamps: true,
-		undescored: true,
-		undescoredAll: true
+		underscored: true,
+		underscoredAll: true
 	}
 }
