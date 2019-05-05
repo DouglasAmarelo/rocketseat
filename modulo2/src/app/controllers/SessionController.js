@@ -7,24 +7,30 @@ class SessionController {
 
 	async store(req, res) {
 		const { email, password } = req.body;
-
-		const user = await User.findOne({ where: { email }});
+		const user = await User.findOne({
+			where: { email }
+		});
 
 		if (!user) {
 			console.log('Usuário não encontrado');
-
 			return res.redirect('/');
 		}
 
 		if (!(await user.checkPassword(password))) {
 			console.log('Senha incorreta!');
-
 			return res.redirect('/');
 		}
 
 		req.session.user = user;
 
 		return res.redirect('/app/dashboard');
+	};
+
+	async destroy(req, res) {
+		req.session.destroy(() => {
+			res.clearCookie('root');
+			res.redirect('/');
+		});
 	};
 };
 

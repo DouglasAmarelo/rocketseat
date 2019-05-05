@@ -11,21 +11,22 @@ class App {
 		this.middlewares();
 		this.views();
 		this.routes();
-	}
+	};
 
 	middlewares() {
 		this.express.use(express.urlencoded({ extended: false }));
 		this.express.use(
 			session({
-				store: new LokiStore({
-					path: path.resolve(__dirname, '..', 'tmp', 'sessions.db')
-				}),
+				name: 'root',
 				secret: 'MyAppSecret',
 				resave: true,
-				saveUninitialized: true,
+				store: new LokiStore({
+					path: path.resolve(__dirname, '..', 'tmp', 'sessions')
+				}),
+				saveUninitialized: true
 			})
 		);
-	}
+	};
 
 	views() {
 		nunjucks.configure(path.resolve(__dirname, 'app', 'views'), {
@@ -36,11 +37,11 @@ class App {
 
 		this.express.use(express.static(path.resolve(__dirname, 'public')));
 		this.express.set('view engine', 'njk');
-	}
+	};
 
 	routes() {
 		this.express.use(require('./routes'));
-	}
-}
+	};
+};
 
 module.exports = new App().express;
