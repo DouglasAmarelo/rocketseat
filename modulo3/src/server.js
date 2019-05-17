@@ -1,16 +1,22 @@
 const express   = require('express');
-const session   = require('express-session');
-const LokiStore = require('connect-loki')(session);
-const path      = require('path');
-const flash     = require('connect-flash');
+const mongoose = require('mongoose');
+const databaseConfig = require('./config/database');
 
 class App {
 	constructor() {
 		this.express = express();
 		this.isDev = process.env.NODE_ENV !== 'production';
 
+		this.database();
 		this.middlewares();
 		this.routes();
+	};
+
+	database() {
+		mongoose.connect(databaseConfig.uri, {
+			useCreateIndex: true,
+			useNewUrlParser: true
+		});
 	};
 
 	middlewares() {
