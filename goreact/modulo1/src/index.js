@@ -1,36 +1,24 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { render } from 'react-dom';
-
-class Button extends Component {
-	render() {
-		return (
-			<a href="#" onClick={this.props.onClick} title={this.props.text}>{this.props.children}</a>
-		);
-	};
-};
-
-Button.defaultProps = {
-	children: 'Salvar'
-}
-
-Button.propTypes = {
-	onClick: PropTypes.func.isRequired,
-	children: PropTypes.string
-}
+import Button from './Button';
+import './style.scss';
 
 class App extends Component {
-	handleClick() {
-		alert('Opa');
+	state = {
+		counter: 0
+	}
+
+	handleClick = () => {
+		this.setState({ counter: this.state.counter + 1 });
 	};
 
 	render() {
 		return (
 			<>
-				<h1>Hello World</h1>
-				<Button onClick={() => alert('Eita!')}></Button>
+				<h1>Hello World </h1>
+				<p><strong>{this.state.counter}</strong></p>
 				<br />
-				<Button text="Opa" onClick={this.handleClick}>Link aqui</Button>
+				<Button text="Opa" onClick={this.handleClick}>Somar</Button>
 			</>
 		);
 	};
