@@ -28,6 +28,14 @@ const CompareList = ({ repositories, removeItemFromList, updateData, loadingUpda
 								<small>stars</small>
 							</li>
 							<li>
+								<strong>{repository.watchers_count}</strong>
+								<small>watchers</small>
+							</li>
+							<li>
+								<strong>{repository.subscribers_count}</strong>
+								<small>subscribers</small>
+							</li>
+							<li>
 								<strong>{repository.forks_count}</strong>
 								<small>forks</small>
 							</li>
@@ -80,10 +88,14 @@ CompareList.propTypes = {
 			avatar_url: PropTypes.string
 		}),
 		stargazers_count: PropTypes.number,
+		watchers_count: PropTypes.number,
+		subscribers_count: PropTypes.number,
 		forks_count: PropTypes.number,
 		open_issues_count: PropTypes.number,
 		lastCommit: PropTypes.date
 	})).isRequired
 };
+
+
 
 export default CompareList;

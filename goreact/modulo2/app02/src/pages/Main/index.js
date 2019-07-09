@@ -62,7 +62,8 @@ class Main extends Component {
 		try {
 			const { data: repository } = await this.getRepositoryData(this.state.repositoryInput);
 
-			repository.lastCommit = moment(repository.pushed_at).fromNow();
+			// Format numbers and date before rendering
+			this.formatRepositoryData(repository);
 
 			this.setState({
 				repositoryInput: '',
@@ -89,6 +90,21 @@ class Main extends Component {
 		this.updateStorageData(repositories);
 	};
 
+	formatNumber = (num) => {
+		num = num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+		return Number(num);
+	};
+
+	// Format numbers and date before rendering
+	formatRepositoryData = (repository) => {
+		repository.stargazers_count  = this.formatNumber(repository.stargazers_count);
+		repository.watchers_count    = this.formatNumber(repository.watchers_count);
+		repository.subscribers_count = this.formatNumber(repository.subscribers_count);
+		repository.forks_count       = this.formatNumber(repository.forks_count);
+		repository.open_issues_count = this.formatNumber(repository.open_issues_count);
+		repository.lastCommit        = moment(repository.pushed_at).fromNow();
+	};
+
 	// Update de repositoriy info
 	updateData = async (index, repo) => {
 
@@ -97,7 +113,8 @@ class Main extends Component {
 		try {
 			const { data: repository } = await this.getRepositoryData(repo);
 
-			repository.lastCommit = moment(repository.pushed_at).fromNow();
+			// Format numbers and date before rendering
+			this.formatRepositoryData(repository);
 
 			const repositories = [...this.state.repositories];
 			repositories[index] = repository;
