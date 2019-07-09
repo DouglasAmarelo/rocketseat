@@ -4,48 +4,164 @@ import api from '../../services/api';
 
 import CompareList from '../../components/CompareList';
 
-import { Container, Form } from './styles';
-import logo from '../../assets/logo.png';
+import { Container, ExampleList, Form } from './styles';
 
 class Main extends Component {
 	state = {
-		repositoryInput: '',
+		loading: false,
+		loadingUpdate: false,
 		repositories: [],
+		repositoryError: false,
+		repositoryInput: '',
+		examples: [
+			'facebook/react',
+			'vuejs/vue',
+			'angular/angular',
+			'emberjs/ember.js',
+			'nodejs/nodejs.org',
+			'Polymer/polymer'
+		]
 	};
 
+	componentDidMount() {
+		this.getStorageData();
+	};
+
+	// Get reposiories data from GiHub API
+	getRepositoryData = (repo) => {
+		return api.get(`/repos/${repo}`);
+	};
+
+	// Get repositories from Local Storage and set to state
+	getStorageData = () => {
+		if (typeof(Storage) === 'undefined') {
+			return;
+		}
+		const hasRepositoriesOnLocalStorage = localStorage.getItem('repositories');
+
+		if (hasRepositoriesOnLocalStorage) {
+			this.setState({ repositories: JSON.parse(hasRepositoriesOnLocalStorage) });
+		}
+	};
+
+	// Set repositories to Local Storage
+	updateStorageData = (data) => {
+		if (typeof(Storage) === 'undefined') {
+			return;
+		}
+
+		localStorage.setItem('repositories', JSON.stringify(data));
+	};
+
+	// Search for repository and print data
 	handleAddRepository = async (e) => {
 		e.preventDefault();
 
+		this.setState({ loading: true });
+
 		try {
-			const { data: repository } = await api.get(`/repos/${this.state.repositoryInput}`);
+			const { data: repository } = await this.getRepositoryData(this.state.repositoryInput);
 
 			repository.lastCommit = moment(repository.pushed_at).fromNow();
 
 			this.setState({
 				repositoryInput: '',
-				repositories: [...this.state.repositories, repository]
+				repositories: [...this.state.repositories, repository],
+				repositoryError: false
 			});
-		} catch (error) {
-			console.error(error);
+
+			this.updateStorageData(this.state.repositories);
+		}
+		catch (error) {
+			this.setState({ repositoryError: true });
+		}
+		finally {
+			this.setState({ loading: false });
 		}
 	};
 
+	// Remove repository from list
+	removeItemFromList = (repositoryIndex) => {
+		const repositories = [...this.state.repositories];
+		repositories.splice(repositoryIndex, 1);
+
+		this.setState({ repositories });
+		this.updateStorageData(repositories);
+	};
+
+	// Update de repositoriy info
+	updateData = async (index, repo) => {
+
+		this.setState({ loadingUpdate: index });
+
+		try {
+			const { data: repository } = await this.getRepositoryData(repo);
+
+			repository.lastCommit = moment(repository.pushed_at).fromNow();
+
+			const repositories = [...this.state.repositories];
+			repositories[index] = repository;
+
+			this.setState({ repositories });
+			this.updateStorageData(repositories);
+		}
+		catch (error) {
+			this.setState({ repositoryError: true });
+		}
+		finally {
+			setTimeout(() => {
+				this.setState({ loadingUpdate: false });
+			}, 300);
+		}
+	};
+
+	tryExample = (repo) => {
+		this.setState({ repositoryInput: repo });
+	};
+
 	render() {
+		const { examples, repositoryError, repositoryInput, repositories, loading, loadingUpdate } = this.state;
+
 		return(
 			<Container>
-				<img src={logo} alt="GitHub Compare"/>
-				<Form onSubmit={this.handleAddRepository}>
+				<h1>Github repositories comparison</h1>
+				<Form
+					withError={repositoryError}
+					onSubmit={this.handleAddRepository}
+				>
 					<input
 						type="text"
 						placeholder="usuário/repositório"
-						value={this.state.repositoryInput}
+						value={repositoryInput}
 						onChange={e => this.setState({ repositoryInput: e.target.value })}
 					/>
 
-					<button type="submit">ok</button>
+					<button type="submit">
+						{ loading ? (
+							<i className="fa fa-spinner fa-pulse"></i>
+						) : 'OK' }
+					</button>
 				</Form>
 
-				<CompareList repositories={this.state.repositories} />
+				<ExampleList className="exemplo">
+					{examples && (
+						examples.map(repo => (
+							<li
+								key={repo}
+								onClick={() => this.tryExample(repo)}
+							>
+								{repo}
+							</li>
+						))
+					)}
+				</ExampleList>
+
+				<CompareList
+					loadingUpdate={loadingUpdate}
+					removeItemFromList={this.removeItemFromList}
+					repositories={repositories}
+					updateData={this.updateData}
+				/>
 			</Container>
 		);
 	};

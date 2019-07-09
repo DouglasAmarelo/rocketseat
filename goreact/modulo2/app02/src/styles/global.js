@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import 'font-awesome/css/font-awesome.css';
 
 const GlobalStyle = createGlobalStyle`
 	* {
@@ -13,6 +14,10 @@ const GlobalStyle = createGlobalStyle`
 		background: #9b65e6;
 		text-rendering: optimizeLegibility!important;
 		font-family: sans-serif;
+	}
+
+	.flex {
+		display: flex;
 	}
 `;
 
