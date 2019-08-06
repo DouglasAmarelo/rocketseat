@@ -6,7 +6,7 @@ import * as FavoriteActions from '../../store/actions/favorites';
 
 class Main extends Component {
 	static propTypes = {
-		addFavorites: PropTypes.func.isRequired,
+		addFavoriteRequest: PropTypes.func.isRequired,
 		favorite: PropTypes.arrayOf(PropTypes.shape({
 			id: PropTypes.number,
 			name: PropTypes.string,
@@ -22,7 +22,7 @@ class Main extends Component {
 	handleRepository = (e) => {
 		e.preventDefault();
 
-		this.props.addFavorite();
+		this.props.addFavoriteRequest(this.state.repositoryInput);
 	};
 
 	render() {
