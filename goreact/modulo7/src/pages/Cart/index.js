@@ -9,9 +9,9 @@ import * as CartActions from '../../store/modules/cart/actions';
 import * as S from './styles';
 import Button from '../../components/Button';
 
-const Cart = ({ cart, total, removeFromCart, updateAmount }) => {
-	const increment = product => updateAmount(product.id, product.amount + 1)
-	const decrement = product => updateAmount(product.id, product.amount - 1)
+const Cart = ({ cart, total, removeFromCart, updateAmountRequest }) => {
+	const increment = product => updateAmountRequest(product.id, product.amount + 1)
+	const decrement = product => updateAmountRequest(product.id, product.amount - 1)
 
 	return(
 		<S.Container>
